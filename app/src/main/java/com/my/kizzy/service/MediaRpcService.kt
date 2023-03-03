@@ -125,8 +125,7 @@ class MediaRpcService : Service() {
                             large_image = appIcon,
                             small_image = smallIcon,
                             enableTimestamps = enable_time,
-                            time = time,
-                            type = 2
+                            time = time
                         )
                     } else {
                         kizzyRPC.apply {
