@@ -118,7 +118,7 @@ class MediaRpcService : Service() {
                     startForeground(8838, builder.build())
                     if (kizzyRPC.isRpcRunning()) {
                         logger.d("MediaRPC","Updating Rpc")
-                        kizzyRPC.updateRPC(
+                        kizzyRPC.updateRPC2LST(
                             name = App_Name.ifEmpty { "YouTube" },
                             details = TITLE.ifEmpty { "Browsing Home Page.." },
                             state = author,
