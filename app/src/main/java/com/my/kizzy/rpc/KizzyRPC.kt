@@ -302,31 +302,34 @@ class KizzyRPC(
         )
     }
     
-    suspend fun updateRPC2LST(sharedRpc: SharedRpc) {
-        if (!discordWebSocket.isActive) return
-        var time = Timestamps(start = startTimestamps)
-        if (sharedRpc.time != null)
-            Timestamps(end = sharedRpc.time.end, start = sharedRpc.time.start).also { time = it }
+    suspend fun updateRPC(
+        name: String,
+        details: String?,
+        state: String?,
+        large_image: RpcImage?,
+        small_image: RpcImage?,
+        enableTimestamps: Boolean,
+        time: Long
+        type: Int
+    ) {
         discordWebSocket.sendActivity(
             Presence(
                 activities = listOf(
-                    Activity(
-                        name = sharedRpc.name,
-                        details = sharedRpc.details?.takeIf { it.isNotEmpty() },
-                        state = sharedRpc.state?.takeIf { it.isNotEmpty() },
-                        type = 2,
-                        timestamps = time,
+                    Activity(name = name,
+                        details = details,
+                        state = state,
+                        type = type,
+                        timestamps = Timestamps(start = time).takeIf { enableTimestamps },
                         assets = Assets(
-                                largeImage = sharedRpc.large_image?.resolveImage(kizzyRepository),
-                                smallImage = sharedRpc.small_image?.resolveImage(kizzyRepository)
-                            ).takeIf { sharedRpc.large_image != null || sharedRpc.small_image != null },
-                        buttons = buttons.takeIf { buttons.size > 0 },
+                            largeImage = large_image?.resolveImage(kizzyRepository),
+                            smallImage = small_image?.resolveImage(kizzyRepository)
+                        ).takeIf { large_image != null || small_image != null },
+                        buttons = buttons.takeIf { it.size > 0 },
                         metadata = Metadata(buttonUrls = buttonUrl).takeIf { buttonUrl.size > 0 },
-                        applicationId = Constants.APPLICATION_ID.takeIf { buttons.size > 0 }
-                    )
+                        applicationId = Constants.APPLICATION_ID.takeIf { buttons.size > 0 })
                 ),
                 afk = true,
-                since = startTimestamps,
+                since = time,
                 status = Constants.DND
             )
         )
