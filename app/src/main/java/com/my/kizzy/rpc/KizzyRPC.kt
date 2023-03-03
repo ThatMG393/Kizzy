@@ -301,4 +301,34 @@ class KizzyRPC(
             )
         )
     }
+    
+    suspend fun updateRPC2LST(sharedRpc: SharedRpc) {
+        if (!discordWebSocket.isActive) return
+        var time = Timestamps(start = startTimestamps)
+        if (sharedRpc.time != null)
+            Timestamps(end = sharedRpc.time.end, start = sharedRpc.time.start).also { time = it }
+        discordWebSocket.sendActivity(
+            Presence(
+                activities = listOf(
+                    Activity(
+                        name = sharedRpc.name,
+                        details = sharedRpc.details?.takeIf { it.isNotEmpty() },
+                        state = sharedRpc.state?.takeIf { it.isNotEmpty() },
+                        type = 2,
+                        timestamps = time,
+                        assets = Assets(
+                                largeImage = sharedRpc.large_image?.resolveImage(kizzyRepository),
+                                smallImage = sharedRpc.small_image?.resolveImage(kizzyRepository)
+                            ).takeIf { sharedRpc.large_image != null || sharedRpc.small_image != null },
+                        buttons = buttons.takeIf { buttons.size > 0 },
+                        metadata = Metadata(buttonUrls = buttonUrl).takeIf { buttonUrl.size > 0 },
+                        applicationId = Constants.APPLICATION_ID.takeIf { buttons.size > 0 }
+                    )
+                ),
+                afk = true,
+                since = startTimestamps,
+                status = Constants.DND
+            )
+        )
+    }
 }
