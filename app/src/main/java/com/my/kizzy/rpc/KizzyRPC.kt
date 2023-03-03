@@ -309,7 +309,7 @@ class KizzyRPC(
         large_image: RpcImage?,
         small_image: RpcImage?,
         enableTimestamps: Boolean,
-        time: Long
+        time: Long,
         type: Int
     ) {
         discordWebSocket.sendActivity(
